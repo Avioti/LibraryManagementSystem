@@ -9,16 +9,23 @@ import java.util.*;
 import java.io.*;
 
 public class Library {
-    private Map<String, Item> items;
-    private Map<String, Member> members;
-    private static int memberCounter = 1000;
-    private Logger logger = Logger.getInstance();
+    protected Map<String, Item> items;
+    protected Map<String, Member> members;
+    protected static int memberCounter = 1000;
+    protected Logger logger = Logger.getInstance();
 
     public Library() {
         this.items = new HashMap<>();
         this.members = new HashMap<>();
         logger.info("Library system initialized");
     }
+
+
+
+
+
+
+
 
     // Item management
     public boolean addItem(Item item) {
@@ -31,6 +38,15 @@ public class Library {
         return false; // Item already exists
     }
 
+
+
+
+
+
+
+
+
+
     public Item getItem(String id) {
         Item item = items.get(id);
         if (item == null) {
@@ -39,10 +55,25 @@ public class Library {
         return item;
     }
 
+
+
+
+
+
+
+
+
     public List<Item> getAllItems() {
         logger.debug("Retrieved all items, count: " + items.size());
         return new ArrayList<>(items.values());
     }
+
+
+
+
+
+
+
 
     public List<Item> getAvailableItems() {
         List<Item> available = new ArrayList<>();
@@ -55,65 +86,35 @@ public class Library {
         return available;
     }
 
-    // Backward compatibility methods for books
-    public boolean addBook(Book book) {
-        return addItem(book);
-    }
 
-    public Book getBook(String isbn) {
-        Item item = getItem(isbn);
-        return (item instanceof Book) ? (Book) item : null;
-    }
 
-    public List<Book> getAllBooks() {
-        List<Book> books = new ArrayList<>();
+
+
+
+
+
+
+
+
+    public List<Item> getAvailableMovies() {
+        List<Item> available = new ArrayList<>();
         for (Item item : items.values()) {
-            if (item instanceof Book) {
-                books.add((Book) item);
+            if (item.isAvailable()) {
+                available.add(item);
             }
         }
-        return books;
+        logger.debug("Retrieved available items, count: " + available.size());
+        return available;
     }
 
-    public List<Book> getAvailableBooks() {
-        List<Book> availableBooks = new ArrayList<>();
-        for (Item item : items.values()) {
-            if (item instanceof Book && item.isAvailable()) {
-                availableBooks.add((Book) item);
-            }
-        }
-        return availableBooks;
-    }
 
-    // Member management
-    public boolean addMember(Member member) {
-        if (!members.containsKey(member.getMemberId())) {
-            members.put(member.getMemberId(), member);
-            logger.info("Member registered: " + member.getName() + " (ID: " + member.getMemberId() + ")");
-            return true;
-        }
-        logger.warn("Attempted to add duplicate member: " + member.getMemberId());
-        return false; // Member already exists
-    }
 
-    public Member getMember(String memberId) {
-        Member member = members.get(memberId);
-        if (member == null) {
-            logger.warn("Member not found: " + memberId);
-        }
-        return member;
-    }
 
-    public static String generateMemberId() {
-        return "M" + (++memberCounter);
-    }
 
     // Search functionality
     public List<Item> searchItems(String query) {
         List<Item> results = new ArrayList<>();
         query = query.replaceAll("\\s", "").toLowerCase();
-
-
 
         for (Item item : items.values()) {
             if (item.getTitle().replaceAll("\\s", "").toLowerCase().contains(query)||
@@ -127,6 +128,10 @@ public class Library {
         return results;
     }
 
+
+
+
+
     public List<Item> searchByGenre(String genre) {
         List<Item> results = new ArrayList<>();
         for (Item item : items.values()) {
@@ -138,6 +143,12 @@ public class Library {
         return results;
     }
 
+
+
+
+
+
+
     public List<Item> searchByCreator(String creator) {
         List<Item> results = new ArrayList<>();
         for (Item item : items.values()) {
@@ -148,6 +159,10 @@ public class Library {
         logger.info("Creator search for '" + creator + "', results: " + results.size());
         return results;
     }
+
+
+
+
 
     // Backward compatibility for book searches
     public List<Book> searchBooks(String query) {
@@ -161,6 +176,10 @@ public class Library {
         return bookResults;
     }
 
+
+
+
+
     public List<Book> searchByAuthor(String author) {
         List<Book> bookResults = new ArrayList<>();
         List<Item> allResults = searchByCreator(author);
@@ -171,6 +190,170 @@ public class Library {
         }
         return bookResults;
     }
+
+
+
+
+
+
+    public List<Movie> searchByDirector(String Director) {
+        List<Movie> movieResults = new ArrayList<>();
+        List<Item> allResults = searchByCreator(Director);
+        for (Item item : allResults) {
+            if (item instanceof Movie) {
+                movieResults.add((Movie) item);
+            }
+        }
+        return movieResults;
+    }
+
+
+
+
+
+
+    public List<Item> searchByTitle(String title) {
+        List<Item> results = new ArrayList<>();
+        for (Item item : items.values()) {
+            if (item.getTitle().equalsIgnoreCase(title)) {
+                results.add(item);
+            }
+        }
+        logger.info("Title search for '" + title + "', results: " + results.size());
+        return results;
+    }
+
+
+
+
+
+
+
+
+
+    // Backward compatibility methods for books
+    public boolean addBook(Book book) {
+        return addItem(book);
+    }
+
+
+
+
+
+
+
+
+
+    public Book getBook(String isbn) {
+        Item item = getItem(isbn);
+        return (item instanceof Book) ? (Book) item : null;
+    }
+
+
+
+
+
+
+
+
+
+
+
+    public List<Book> getAllBooks() {
+        List<Book> books = new ArrayList<>();
+        for (Item item : items.values()) {
+            if (item instanceof Book) {
+                books.add((Book) item);
+            }
+        }
+        return books;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public List<Book> getAvailableBooks() {
+        List<Book> availableBooks = new ArrayList<>();
+        for (Item item : items.values()) {
+            if (item instanceof Book && item.isAvailable()) {
+                availableBooks.add((Book) item);
+            }
+        }
+        return availableBooks;
+    }
+
+
+
+
+
+
+
+
+
+
+
+    // Member management
+    public boolean addMember(Member member) {
+        if (!members.containsKey(member.getMemberId())) {
+            members.put(member.getMemberId(), member);
+            logger.info("Member registered: " + member.getName() + " (ID: " + member.getMemberId() + ")");
+            return true;
+        }
+        logger.warn("Attempted to add duplicate member: " + member.getMemberId());
+        return false; // Member already exists
+    }
+
+
+
+
+
+
+
+
+
+    public Member getMember(String memberId) {
+        Member member = members.get(memberId);
+        if (member == null) {
+            logger.warn("Member not found: " + memberId);
+        }
+        return member;
+    }
+
+
+
+
+
+
+
+    public static String generateMemberId() {
+        return "M" + (++memberCounter);
+    }
+
+
+
+
+
+
+
+
+
+
 
     // Borrow/Return operations
     public boolean borrowItem(String memberId, String itemId) {
@@ -199,11 +382,21 @@ public class Library {
             return false; // Member already has this item
         }
 
+
         member.borrowBook(itemId);
         item.setAvailable(false);
         logger.info("Item borrowed successfully - Member: " + member.getName() + " (" + memberId + "), Item: " + item.getTitle() + " (" + itemId + ")");
         return true;
     }
+
+
+
+
+
+
+
+
+
 
     public boolean returnItem(String memberId, String itemId) {
         Member member = members.get(memberId);
@@ -230,14 +423,37 @@ public class Library {
         return true;
     }
 
+
+
+
+
     // Backward compatibility for book operations
     public boolean borrowBook(String memberId, String isbn) {
         return borrowItem(memberId, isbn);
     }
 
+    public boolean borrowMovie(String memberId, String mve) {
+        return borrowItem(memberId, mve);
+    }
+
+
+
+
+
+
     public boolean returnBook(String memberId, String isbn) {
         return returnItem(memberId, isbn);
     }
+
+
+
+    public boolean returnMovie(String memberId, String mve) {
+        return returnItem(memberId, mve);
+    }
+
+
+
+
 
     // File I/O operations
     public void saveToCSV() throws IOException {
