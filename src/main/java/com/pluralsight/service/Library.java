@@ -194,6 +194,16 @@ public class Library {
 
 
 
+    public List<Magazine> searchByPublisher(String publisher) {
+        List<Magazine> magazineResults = new ArrayList<>();
+        List<Item> allResults = searchByCreator(publisher);
+        for (Item item : allResults) {
+            if (item instanceof Magazine) {
+                magazineResults.add((Magazine) item);
+            }
+        }
+        return magazineResults;
+    }
 
 
     public List<Movie> searchByDirector(String Director) {
@@ -298,6 +308,15 @@ public class Library {
         return availableBooks;
     }
 
+    public List<Magazine> getAvailableMagazines() {
+        List<Magazine> availableMagazines = new ArrayList<>();
+        for (Item item : items.values()) {
+            if (item instanceof Magazine && item.isAvailable()) {
+                availableMagazines.add((Magazine) item);
+            }
+        }
+        return availableMagazines;
+    }
 
 
 
@@ -453,6 +472,9 @@ public class Library {
 
 
 
+    public boolean returnMagazine(String memberId, String mve) {
+        return returnItem(memberId, mve);
+    }
 
 
     // File I/O operations
