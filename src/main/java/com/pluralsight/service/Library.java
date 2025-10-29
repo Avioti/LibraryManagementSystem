@@ -111,13 +111,15 @@ public class Library {
     // Search functionality
     public List<Item> searchItems(String query) {
         List<Item> results = new ArrayList<>();
-        query = query.toLowerCase();
+        query = query.replaceAll("\\s", "").toLowerCase();
+
+
 
         for (Item item : items.values()) {
-            if (item.getTitle().contains(query) ||
-                    item.getCreator().contains(query) ||
-                    item.getGenre().contains(query) ||
-                    item.getId().contains(query)) {
+            if (item.getTitle().replaceAll("\\s", "").toLowerCase().contains(query)||
+                    item.getCreator().replaceAll("\\s", "").toLowerCase().contains(query) ||
+                    item.getGenre().replaceAll("\\s", "").toLowerCase().contains(query) ||
+                    item.getId().replaceAll("\\s", "").toLowerCase().contains(query)) {
                 results.add(item);
             }
         }
@@ -128,7 +130,7 @@ public class Library {
     public List<Item> searchByGenre(String genre) {
         List<Item> results = new ArrayList<>();
         for (Item item : items.values()) {
-            if (item.getGenre().contains(genre)) {
+            if (item.getGenre().equalsIgnoreCase(genre)) {
                 results.add(item);
             }
         }
@@ -185,7 +187,7 @@ public class Library {
             return false;
         }
 
-        item.setAvailable(false);
+
 
         if (!item.isAvailable()) {
             logger.warn("Borrow attempt failed - Item not available: " + item.getTitle() + " (ID: " + itemId + ")");
@@ -198,6 +200,7 @@ public class Library {
         }
 
         member.borrowBook(itemId);
+        item.setAvailable(false);
         logger.info("Item borrowed successfully - Member: " + member.getName() + " (" + memberId + "), Item: " + item.getTitle() + " (" + itemId + ")");
         return true;
     }
